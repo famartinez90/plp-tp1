@@ -34,8 +34,9 @@ longitudPromedioPalabras = (\t ->  mean (map genericLength (split ' ' t)) )
 cuentas :: Eq a => [a] -> [(Int, a)]
 cuentas xs = zip (map (\x -> length (filter (==x) xs)) (nub xs)) (nub xs)
 
+-- Ejercicio 4
 repeticionesPromedio :: Extractor
-repeticionesPromedio = undefined --(\t -> )
+repeticionesPromedio = (\t -> mean (map (\x -> fromIntegral (fst x)) (cuentas (split ' ' t))))
 
 tokens :: [Char]
 tokens = "_,)(*;-=>/.{}\"&:+#[]<|%!\'@?~^$` abcdefghijklmnopqrstuvwxyz0123456789"

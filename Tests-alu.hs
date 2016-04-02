@@ -10,7 +10,8 @@ main = runTestTT allTests
 
 allTests = test [
 	"split" ~: testsSplit,
-	"cuentas" ~: testsCuentas
+	"cuentas" ~: testsCuentas,
+	"repeticionesPromedio" ~: testRepeticionesPromedio
 	]
 
 testsSplit = test [
@@ -24,4 +25,11 @@ testsCuentas = test [
 	cuentas ["x", "y", "z", "a", "b"] ~?= [(1,"x"), (1,"y"), (1,"z"), (1,"a"), (1,"b")],
 	cuentas ["x", "x", "x", "x"] ~?= [(4,"x")],
 	cuentas ["y"] ~?= [(1,"y")]
+	]
+
+testRepeticionesPromedio = test [
+	repeticionesPromedio "lalala $$++$$ lalala lalala $$++$$" ~?= 2.5,
+	repeticionesPromedio "lalala lalala lalala" ~?= 3,
+	repeticionesPromedio "lalala $$++$$ lalala lalala $$++$$ a b" ~?= 1.75,
+	repeticionesPromedio "" ~?= 1
 	]
