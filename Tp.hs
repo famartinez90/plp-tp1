@@ -48,26 +48,34 @@ frecuenciaTokens = [ (\t -> frecuenciaChar chr t) | chr <- tokens ]
 frecuenciaChar :: Eq a => a -> [a] -> Float
 frecuenciaChar c xs =  fromIntegral (length (filter (==c) xs)) / fromIntegral (length xs)
 
+-- Ejercicio 6
 normalizarExtractor :: [Texto] -> Extractor -> Extractor
 normalizarExtractor = undefined
 
+-- Ejercicio 7
 extraerFeatures :: [Extractor] -> [Texto] -> Datos
 extraerFeatures = undefined
 
+-- Ejercicio 8.1
 distEuclideana :: Medida
 distEuclideana = undefined
 
+-- Ejercicio 8.2
 distCoseno :: Medida
 distCoseno = undefined
 
+-- Ejercicio 9
 knn :: Int -> Datos -> [Etiqueta] -> Medida -> Modelo
 knn = undefined
 
+-- Ejercicio 11
 accuracy :: [Etiqueta] -> [Etiqueta] -> Float
 accuracy = undefined
 
+-- Ejercicio 10
 separarDatos :: Datos -> [Etiqueta] -> Int -> Int -> (Datos, Datos, [Etiqueta], [Etiqueta])
 separarDatos = undefined
 
+-- Ejercicio 12
 nFoldCrossValidation :: Int -> Datos -> [Etiqueta] -> Float
 nFoldCrossValidation = undefined

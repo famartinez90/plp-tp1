@@ -11,6 +11,7 @@ main = runTestTT allTests
 allTests = test [
  "split" ~: testsSplit,
  "cuentas" ~: testsCuentas,
+ "longitudPromedioPalabras" ~: testLongitudPromedioPalabras,
  "repeticionesPromedio" ~: testRepeticionesPromedio,
  "frecuenciaTokens" ~: testFrecuenciaTokens
  ]
@@ -19,6 +20,13 @@ testsSplit = test [
  split ',' "PLP" ~?= ["PLP"],
  split ',' " ,PLP, " ~?= [" ","PLP"," "],
  split ',' "hola,PLP" ~?= ["hola","PLP"]
+ ]
+
+testLongitudPromedioPalabras = test [
+ longitudPromedioPalabras "Este test tiene palabras $$++$$" ~?= 5.4,
+ longitudPromedioPalabras "test test test" ~?= 4,
+ longitudPromedioPalabras "a bc def ghij klmno" ~?= 3,
+ longitudPromedioPalabras "" ~?= 0
  ]
 
 testsCuentas = test [
