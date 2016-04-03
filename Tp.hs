@@ -38,11 +38,15 @@ cuentas xs = zip (map (\x -> length (filter (==x) xs)) (nub xs)) (nub xs)
 repeticionesPromedio :: Extractor
 repeticionesPromedio = (\t -> mean (map (\x -> fromIntegral (fst x)) (cuentas (split ' ' t))))
 
+-- Ejercicio 5
 tokens :: [Char]
 tokens = "_,)(*;-=>/.{}\"&:+#[]<|%!\'@?~^$` abcdefghijklmnopqrstuvwxyz0123456789"
 
 frecuenciaTokens :: [Extractor]
-frecuenciaTokens = undefined
+frecuenciaTokens = [ (\t -> frecuenciaChar chr t) | chr <- tokens ]
+
+frecuenciaChar :: Eq a => a -> [a] -> Float
+frecuenciaChar c xs =  fromIntegral (length (filter (==c) xs)) / fromIntegral (length xs)
 
 normalizarExtractor :: [Texto] -> Extractor -> Extractor
 normalizarExtractor = undefined

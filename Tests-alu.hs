@@ -9,27 +9,36 @@ import Data.List
 main = runTestTT allTests
 
 allTests = test [
-	"split" ~: testsSplit,
-	"cuentas" ~: testsCuentas,
-	"repeticionesPromedio" ~: testRepeticionesPromedio
-	]
+ "split" ~: testsSplit,
+ "cuentas" ~: testsCuentas,
+ "repeticionesPromedio" ~: testRepeticionesPromedio,
+ "frecuenciaTokens" ~: testFrecuenciaTokens
+ ]
 
 testsSplit = test [
-	split ',' "PLP" ~?= ["PLP"],
-	split ',' " ,PLP, " ~?= [" ","PLP"," "],
-	split ',' "hola,PLP" ~?= ["hola","PLP"]
-	]
+ split ',' "PLP" ~?= ["PLP"],
+ split ',' " ,PLP, " ~?= [" ","PLP"," "],
+ split ',' "hola,PLP" ~?= ["hola","PLP"]
+ ]
 
 testsCuentas = test [
-	cuentas ["x","x","y","x","z"] ~?= [(3,"x"), (1,"y"), (1,"z")],
-	cuentas ["x", "y", "z", "a", "b"] ~?= [(1,"x"), (1,"y"), (1,"z"), (1,"a"), (1,"b")],
-	cuentas ["x", "x", "x", "x"] ~?= [(4,"x")],
-	cuentas ["y"] ~?= [(1,"y")]
-	]
+ cuentas ["x","x","y","x","z"] ~?= [(3,"x"), (1,"y"), (1,"z")],
+ cuentas ["x", "y", "z", "a", "b"] ~?= [(1,"x"), (1,"y"), (1,"z"), (1,"a"), (1,"b")],
+ cuentas ["x", "x", "x", "x"] ~?= [(4,"x")],
+ cuentas ["y"] ~?= [(1,"y")]
+ ]
 
 testRepeticionesPromedio = test [
-	repeticionesPromedio "lalala $$++$$ lalala lalala $$++$$" ~?= 2.5,
-	repeticionesPromedio "lalala lalala lalala" ~?= 3,
-	repeticionesPromedio "lalala $$++$$ lalala lalala $$++$$ a b" ~?= 1.75,
-	repeticionesPromedio "" ~?= 1
-	]
+ repeticionesPromedio "lalala $$++$$ lalala lalala $$++$$" ~?= 2.5,
+ repeticionesPromedio "lalala lalala lalala" ~?= 3,
+ repeticionesPromedio "lalala $$++$$ lalala lalala $$++$$ a b" ~?= 1.75,
+ repeticionesPromedio "" ~?= 1
+ ]
+
+testFrecuenciaTokens = test [
+ (head frecuenciaTokens) "use_snake_case !" ~?= 0.125,
+ (head (tail frecuenciaTokens)) "use_snake_case !" ~?= 0,
+ (head (tail (tail frecuenciaTokens))) ")" ~?= 1,
+ (head (tail (tail frecuenciaTokens))) "))))" ~?= 1,
+ (head frecuenciaTokens) "use___snake_____case____!_" ~?= 0.5 
+ ]
