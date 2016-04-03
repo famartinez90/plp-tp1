@@ -32,7 +32,7 @@ longitudPromedioPalabras = (\t ->  mean (map genericLength (split ' ' t)) )
 
 -- Ejercicio 3
 cuentas :: Eq a => [a] -> [(Int, a)]
-cuentas xs = zip (map (\x -> length (filter (==x) xs)) (nub xs)) (nub xs)
+cuentas = (\xs -> zip (map (\x -> length (filter (==x) xs)) (nub xs)) (nub xs))
 
 -- Ejercicio 4
 repeticionesPromedio :: Extractor
@@ -43,14 +43,20 @@ tokens :: [Char]
 tokens = "_,)(*;-=>/.{}\"&:+#[]<|%!\'@?~^$` abcdefghijklmnopqrstuvwxyz0123456789"
 
 frecuenciaTokens :: [Extractor]
-frecuenciaTokens = [ (\t -> frecuenciaChar chr t) | chr <- tokens ]
+frecuenciaTokens = [ (\t -> frecuenciaChar c t) | c <- tokens ]
 
 frecuenciaChar :: Eq a => a -> [a] -> Float
 frecuenciaChar c xs =  fromIntegral (length (filter (==c) xs)) / fromIntegral (length xs)
 
 -- Ejercicio 6
 normalizarExtractor :: [Texto] -> Extractor -> Extractor
-normalizarExtractor = undefined
+normalizarExtractor = (\ts ex -> (\t -> (ex t) / maximoAbsoluto (aplicarExtractor ts ex)))
+
+aplicarExtractor :: [Texto] -> Extractor -> [Float]
+aplicarExtractor = (\ts ex -> map ex ts)
+
+maximoAbsoluto :: Num a => Ord a => [a] -> a
+maximoAbsoluto = (\xs -> maximum (sort (map abs xs))) 
 
 -- Ejercicio 7
 extraerFeatures :: [Extractor] -> [Texto] -> Datos

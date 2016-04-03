@@ -13,7 +13,8 @@ allTests = test [
  "cuentas" ~: testsCuentas,
  "longitudPromedioPalabras" ~: testLongitudPromedioPalabras,
  "repeticionesPromedio" ~: testRepeticionesPromedio,
- "frecuenciaTokens" ~: testFrecuenciaTokens
+ "frecuenciaTokens" ~: testFrecuenciaTokens,
+ "normalizarExtractor" ~: testNormalizarExtractor
  ]
 
 testsSplit = test [
@@ -49,4 +50,12 @@ testFrecuenciaTokens = test [
  (head (tail (tail frecuenciaTokens))) ")" ~?= 1,
  (head (tail (tail frecuenciaTokens))) "))))" ~?= 1,
  (head frecuenciaTokens) "use___snake_____case____!_" ~?= 0.5 
+ ]
+
+testNormalizarExtractor = test [
+ (normalizarExtractor ["use_snake_case !", "use___snake_____case____!_"] (head frecuenciaTokens)) "use_snake_case !" ~?= 0.25,
+ (normalizarExtractor ["use_snake_case !", "use___snake_____case____!_"] (head frecuenciaTokens)) "use___snake_____case____!_" ~?= 1,
+ (normalizarExtractor ["lalala $$++$$ lalala lalala $$++$$", "lalala lalala lalala", "lalala $$++$$ lalala lalala $$++$$ a b"] repeticionesPromedio) "lalala lalala lalala" ~?= 1,
+ (normalizarExtractor ["lalala $$++$$ lalala lalala $$++$$", "lalala lalala lalala", "lalala $$++$$ lalala lalala $$++$$ a b"] repeticionesPromedio) "lalala $$++$$ lalala lalala $$++$$" ~?= 0.8333333,
+ (normalizarExtractor ["lalala $$++$$ lalala lalala $$++$$", "lalala lalala lalala", "lalala $$++$$ lalala lalala $$++$$ a b"] repeticionesPromedio) "lalala $$++$$ lalala lalala $$++$$ a b" ~?= 0.5833333
  ]
