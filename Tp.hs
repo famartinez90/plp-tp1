@@ -55,12 +55,15 @@ normalizarExtractor = (\ts ex -> (\t -> (ex t) / maximoAbsoluto (aplicarExtracto
 aplicarExtractor :: [Texto] -> Extractor -> [Float]
 aplicarExtractor = (\ts ex -> map ex ts)
 
-maximoAbsoluto :: Num a => Ord a => [a] -> a
+maximoAbsoluto :: (Num a , Ord a) => [a] -> a
 maximoAbsoluto = (\xs -> maximum (sort (map abs xs))) 
 
 -- Ejercicio 7
 extraerFeatures :: [Extractor] -> [Texto] -> Datos
-extraerFeatures = undefined
+extraerFeatures = \ex ts -> [crearInstancias ex ts t|t <- ts]
+
+crearInstancias :: [Extractor] -> [Texto] -> Texto -> Instancia
+crearInstancias ex ts t = [(normalizarExtractor ts e) t |e <- ex] 
 
 -- Ejercicio 8.1
 distEuclideana :: Medida
