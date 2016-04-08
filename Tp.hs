@@ -67,23 +67,59 @@ crearInstancias ex ts t = [(normalizarExtractor ts e) t |e <- ex]
 
 -- Ejercicio 8.1
 distEuclideana :: Medida
-distEuclideana = undefined
+distEuclideana = \xs ys -> sqrt (sum (zipWith restaYCuadrado xs ys))
+
+restaYCuadrado :: Float -> Float -> Float
+restaYCuadrado f1 f2 = (f1-f2)*(f1-f2)
 
 -- Ejercicio 8.2
 distCoseno :: Medida
-distCoseno = undefined
+distCoseno = \xs ys -> (productoVectorial xs ys) / ((norma xs) * (norma ys))
 
+productoVectorial :: Instancia -> Instancia -> Float
+productoVectorial xs ys = sum (zipWith (*) xs ys)
+
+norma:: [Float] -> Float
+norma xs = sqrt (productoVectorial xs xs)
 -- Ejercicio 9
 knn :: Int -> Datos -> [Etiqueta] -> Medida -> Modelo
-knn = undefined
+knn n datos listEti  med = \inst ->  snd (last(sort(cuentas[snd(y) | y <- (take n (sort(zip (map (med inst) datos) listEti) ))])))
+-- 
 
--- Ejercicio 11
+-- Ejercicio 11 
 accuracy :: [Etiqueta] -> [Etiqueta] -> Float
-accuracy = undefined
+accuracy xs ys = (genericLength([y|y<-(zip xs ys),fst(y)==snd(y) ]))/(genericLength(zip xs ys))   
 
 -- Ejercicio 10
 separarDatos :: Datos -> [Etiqueta] -> Int -> Int -> (Datos, Datos, [Etiqueta], [Etiqueta])
-separarDatos = undefined
+separarDatos xs ys n p = ( (part1 xs n p) ++ (part3 xs n p) ,
+							(part2 xs n p)					,
+						   (part1 ys n p) ++ (part3 ys n p) ,
+							(part2 ys n p)
+							)
+
+--cantXPart: devuelve la cantidad de elementos que habría en cada partición si se divide la lista em "n" partes iguales
+--sin contar los elementos que sobren
+cantXPart :: [a] -> Int -> Int
+cantXPart xs n = div (length xs) n
+
+--podarLista: Dada una Lista y una cantidad "n" de particiones a la lista, 
+--devuelve la lista ignorando los elementos que sobren de esa partición 
+podarLista:: [a] -> Int -> [a]
+podarLista xs n = take ((cantXPart xs n)*n) xs
+
+--devuelve desde el comienzo de la lista hasta justo antes de comenzar la partición "p"
+part1:: [a] -> Int -> Int -> [a]
+part1 xs n p = take	 ((p-1)*(cantXPart xs n))	xs 
+
+--devuelve la partición "p" de la lista
+part2:: [a] -> Int -> Int -> [a]
+part2 xs n p = drop 	((p-1)*(cantXPart xs n))	(take	 (p*(cantXPart xs n))	xs)
+
+--devuelve la lista desde el elemento después de la partición p hasta la última partición valida
+--(no toma en cuenta los elementos que sobran)
+part3:: [a] -> Int -> Int -> [a]
+part3 xs n p = drop	 (p*(cantXPart xs n))	(podarLista xs n) 
 
 -- Ejercicio 12
 nFoldCrossValidation :: Int -> Datos -> [Etiqueta] -> Float
