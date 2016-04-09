@@ -81,14 +81,15 @@ productoVectorial xs ys = sum (zipWith (*) xs ys)
 
 norma:: [Float] -> Float
 norma xs = sqrt (productoVectorial xs xs)
+
 -- Ejercicio 9
 knn :: Int -> Datos -> [Etiqueta] -> Medida -> Modelo
-knn n datos listEti  med = \inst ->  snd (last(sort(cuentas[snd(y) | y <- (take n (sort(zip (map (med inst) datos) listEti) ))])))
+knn n datos listEti med = \inst ->  snd (last(sort(cuentas[snd(y) | y <- (take n (sort(zip (map (med inst) datos) listEti) ))])))
 -- 
 
 -- Ejercicio 11 
 accuracy :: [Etiqueta] -> [Etiqueta] -> Float
-accuracy xs ys = (genericLength([y|y<-(zip xs ys),fst(y)==snd(y) ]))/(genericLength(zip xs ys))   
+accuracy xs ys = (genericLength([y |y<-(zip xs ys),fst(y)==snd(y) ]))/(genericLength(zip xs ys))   
 
 -- Ejercicio 10
 separarDatos :: Datos -> [Etiqueta] -> Int -> Int -> (Datos, Datos, [Etiqueta], [Etiqueta])
@@ -123,4 +124,16 @@ part3 xs n p = drop	 (p*(cantXPart xs n))	(podarLista xs n)
 
 -- Ejercicio 12
 nFoldCrossValidation :: Int -> Datos -> [Etiqueta] -> Float
-nFoldCrossValidation = undefined
+nFoldCrossValidation = (\n mtz ets -> mean (accuracyResultados n mtz ets))
+
+accuracyResultados :: Int -> Datos -> [Etiqueta] -> [Float]
+accuracyResultados = (\n mtz ets -> map (\(x,y) -> accuracy x y) (resultadosIntermedios n mtz ets))
+
+resultadosIntermedios :: Int -> Datos -> [Etiqueta] -> [([Etiqueta], [Etiqueta])]
+resultadosIntermedios = (\n mtz ets -> map (\(w,x,y,z) -> zip (vecinosMasCercanos15 w x y) z) (nDatosSeparados n mtz ets))
+
+nDatosSeparados :: Int -> Datos -> [Etiqueta] -> [(Datos, Datos, [Etiqueta], [Etiqueta])]
+nDatosSeparados = (\n mtz ets -> map (separarDatos mtz ets n) [1..n])
+
+vecinosMasCercanos15 :: Datos -> Datos -> [Etiqueta] -> Etiqueta
+vecinosMasCercanos15 = (\mtz p ets -> (knn 15 mtz ets distEuclideana) p )
