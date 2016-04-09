@@ -20,22 +20,26 @@ mean :: [Float] -> Float
 mean xs = realToFrac (sum xs) / genericLength xs
 
 -- Ejercicio 1
+-- simplemente cambiamos el orden para usar tilps que usa foldr y lo filtramos para el caso de listas vacias, como se mencionó en clase
 split :: Eq a => a -> [a] -> [[a]]
 split = \x xs -> filter (/=[]) (tilps xs x)
 
-
+-- para usar foldr hacemos un cambio de parametros y usamos esta funcion tilps
 tilps :: Eq a => [a] -> a -> [[a]]
 tilps = foldr (\x r -> \n -> if x==n then []:(r n) else ((x:head(r n)):(tail(r n)))) (const[[]])
 
 -- Ejercicio 2
+-- dado un string lo separamos en listas (usando split aplicado a ' ') con map aplicamos la funcion genericLength que nos da en Floats la longitud de cada una de las listas y de esa lista obtenemos el promedio 
 longitudPromedioPalabras :: Extractor
 longitudPromedioPalabras = (\t ->  mean (map genericLength (split ' ' t)) )
 
 -- Ejercicio 3
+
 cuentas :: Eq a => [a] -> [(Int, a)]
 cuentas = (\xs -> zip (map (\x -> length (filter (==x) xs)) (nub xs)) (nub xs))
 
 -- Ejercicio 4
+
 repeticionesPromedio :: Extractor
 repeticionesPromedio = (\t -> mean (map (\x -> fromIntegral (fst x)) (cuentas (split ' ' t))))
 
