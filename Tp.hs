@@ -21,7 +21,8 @@ mean xs = realToFrac (sum xs) / genericLength xs
 
 -- Ejercicio 1
 split :: Eq a => a -> [a] -> [[a]]
-split = flip tilps
+split = \x xs -> filter (/=[]) (tilps xs x)
+
 
 tilps :: Eq a => [a] -> a -> [[a]]
 tilps = foldr (\x r -> \n -> if x==n then []:(r n) else ((x:head(r n)):(tail(r n)))) (const[[]])
@@ -84,7 +85,7 @@ norma xs = sqrt (productoVectorial xs xs)
 
 -- Ejercicio 9
 knn :: Int -> Datos -> [Etiqueta] -> Medida -> Modelo
-knn n datos listEti med = \inst ->  snd (last(sort(cuentas[snd(y) | y <- (take n (sort(zip (map (med inst) datos) listEti) ))])))
+knn n datos listEti med = \inst ->  snd (last(sort(cuentas [snd(y) | y <- (take n (sort(zip (map (med inst) datos) listEti) ))])))
 -- 
 
 -- Ejercicio 11 
@@ -123,17 +124,31 @@ part3:: [a] -> Int -> Int -> [a]
 part3 xs n p = drop	 (p*(cantXPart xs n))	(podarLista xs n) 
 
 -- Ejercicio 12
+--nFoldCrossValidation :: Int -> Datos -> [Etiqueta] -> Float
+--nFoldCrossValidation = (\n mtz ets -> mean (accuracyResultados n mtz ets))
+
+--accuracyResultados :: Int -> Datos -> [Etiqueta] -> [Float]
+--accuracyResultados = (\n mtz ets -> map (\(x,y) -> accuracy x y) (resultadosIntermedios n mtz ets))
+
+--resultadosIntermedios :: Int -> Datos -> [Etiqueta] -> [([Etiqueta], [Etiqueta])]
+--resultadosIntermedios = (\n mtz ets -> map (\(w,x,y,z) -> zip (vecinosMasCercanos15 w x y) z) (nDatosSeparados n mtz ets))
+
+--nDatosSeparados :: Int -> Datos -> [Etiqueta] -> [(Datos, Datos, [Etiqueta], [Etiqueta])]
+--nDatosSeparados = (\n mtz ets -> map (separarDatos mtz ets n) [1..n])
+
+--vecinosMasCercanos15 :: Datos -> Datos -> [Etiqueta] -> Etiqueta
+--vecinosMasCercanos15 = (\mtz p ets -> (knn 15 mtz ets distEuclideana) p )
+
+
+--la idea es la siguiente:
+-- hacer un promedio de los accuracy generados tomando separarDatos donde vario el p para quedarme con una particion distinta 
+-- luego separar datos nos devuelve una cuadrupla (d1,d2,eti1,eti2) uso la funcion prueba para con d2 obtener una etiqueta por cada instancia de forma de obtener una etiqueta para cada instancia(aca es donde obtenemos la lista para hacer accuracy entre eti2(que es la posta y la que conseguimos mediante prueba)). 
+
 nFoldCrossValidation :: Int -> Datos -> [Etiqueta] -> Float
-nFoldCrossValidation = (\n mtz ets -> mean (accuracyResultados n mtz ets))
+nFoldCrossValidation n datos etiq = mean ([accuracy (prueba d2 15 d1 eti1) eti2  |p<-[1,n], let (d1,d2,eti1,eti2) =(separarDatos datos etiq n p)] ) 
 
-accuracyResultados :: Int -> Datos -> [Etiqueta] -> [Float]
-accuracyResultados = (\n mtz ets -> map (\(x,y) -> accuracy x y) (resultadosIntermedios n mtz ets))
+prueba::Datos -> Int -> Datos -> [Etiqueta] -> [Etiqueta]
+prueba datap n datos etits = map (knn n datos etits distEuclideana) datap 
 
-resultadosIntermedios :: Int -> Datos -> [Etiqueta] -> [([Etiqueta], [Etiqueta])]
-resultadosIntermedios = (\n mtz ets -> map (\(w,x,y,z) -> zip (vecinosMasCercanos15 w x y) z) (nDatosSeparados n mtz ets))
+-- paja probar.. jjejee pero mañana veo me tengo fe
 
-nDatosSeparados :: Int -> Datos -> [Etiqueta] -> [(Datos, Datos, [Etiqueta], [Etiqueta])]
-nDatosSeparados = (\n mtz ets -> map (separarDatos mtz ets n) [1..n])
-
-vecinosMasCercanos15 :: Datos -> Datos -> [Etiqueta] -> Etiqueta
-vecinosMasCercanos15 = (\mtz p ets -> (knn 15 mtz ets distEuclideana) p )
