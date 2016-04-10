@@ -18,7 +18,8 @@ allTests = test [
  "extraerFeatures" ~: testExtraerFeatures,
  "distEuclideana" ~: testDistEuclideana,
  "distCoseno" ~: testDistCoseno,
- "knn" ~: testKnn
+ "knn" ~: testKnn,
+ "separarDatos" ~: testSepararDatos
  ]
 
 testsSplit = test [
@@ -94,4 +95,19 @@ testKnn = test [
  (knn 2 [[0,1],[0,2],[2,1],[1,1],[2,3]] ["i","i","i","i","i"] distEuclideana) [1,1] ~?= "i",
  (knn 2 [[0,1],[1,1]] ["i","f"] distEuclideana) [1,1] ~?= "i",
  (knn 2 [[1,1]] ["f"] distEuclideana) [1,1] ~?= "f"
+ ]
+
+xs = [[1,1],[2,2],[3,3],[4,4],[5,5],[6,6],[7,7]] :: Datos
+y = ["1","2","3","4","5","6","7"]
+(x_train, x_val, y_train, y_val) = separarDatos xs y 3 2
+(x_train2, x_val2, y_train2, y_val2) = separarDatos xs y 7 1
+(x_train3, x_val3, y_train3, y_val3) = separarDatos xs y 2 1
+
+testSepararDatos = test [
+ (x_train, y_train) ~?= ([[1.0,1.0],[2.0,2.0],[5.0,5.0],[6.0,6.0]],["1","2","5","6"]),
+ (x_val, y_val) ~?= ([[3.0,3.0],[4.0,4.0]],["3","4"]),
+ (x_train2, y_train2) ~?= ([[2.0,2.0],[3.0,3.0],[4.0,4.0],[5.0,5.0],[6.0,6.0],[7.0,7.0]],["2","3","4","5","6","7"]),
+ (x_val2, y_val2) ~?= ([[1.0,1.0]],["1"]),
+ (x_train3, y_train3) ~?= ([[4.0,4.0],[5.0,5.0],[6.0,6.0]],["4","5","6"]),
+ (x_val3, y_val3) ~?= ([[1.0,1.0],[2.0,2.0],[3.0,3.0]],["1","2","3"])
  ]
