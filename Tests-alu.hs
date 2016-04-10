@@ -15,7 +15,9 @@ allTests = test [
  "repeticionesPromedio" ~: testRepeticionesPromedio,
  "frecuenciaTokens" ~: testFrecuenciaTokens,
  "normalizarExtractor" ~: testNormalizarExtractor,
- "extraerFeatures" ~: testExtraerFeatures
+ "extraerFeatures" ~: testExtraerFeatures,
+ "distEuclideana" ~: testDistEuclideana,
+ "distCoseno" ~: testDistCoseno
  ]
 
 testsSplit = test [
@@ -67,3 +69,19 @@ testExtraerFeatures = test [
   extraerFeatures [longitudPromedioPalabras, (head frecuenciaTokens)] ["use_snake_case !", "lalala $$++$$"] ~?= [[1.0,1.0], [0.8,0.0]],
   extraerFeatures [longitudPromedioPalabras, (head frecuenciaTokens)] ["use_snake_case !", "_____"] ~?= [[1.0,0.125], [0.6666667,1.0]]
  ]
+
+testDistEuclideana = test [
+ distEuclideana [1.0,0.75,0.8125] [0.75,1.0,0.5] ~?= 0.47186464,
+ distEuclideana [0.75,1.0,0.5] [0.75,1.0,0.5] ~?= 0.0,
+ distEuclideana [2.0,2.0,2.0,2.0] [0.0,0.0,0.0,0.0] ~?= 4.0,
+ distEuclideana [30.0] [10.0] ~?= 20.0,
+ distEuclideana [-30.0] [-10.0] ~?= 20.0
+ ]
+
+testDistCoseno = test [
+ distCoseno [0,3,4] [0,-3,-4] ~?= -1.0,
+ distCoseno [1.0,2.0] [2.0,1.0] ~?= 0.8,
+ distCoseno [0.0,2.0] [2.0,0.0] ~?= 0.0,
+ distCoseno [30.0] [10.0] ~?= 1.0
+ ]
+
