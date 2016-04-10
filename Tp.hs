@@ -89,7 +89,7 @@ norma xs = sqrt (productoVectorial xs xs)
 
 -- Ejercicio 9
 knn :: Int -> Datos -> [Etiqueta] -> Medida -> Modelo
-knn n datos listEti med = \inst ->  snd (last(sort(cuentas [snd(y) | y <- (take n (sort(zip (map (med inst) datos) listEti) ))])))
+knn n datos listEti med = \inst ->  snd (head(sort(cuentas [snd(y) | y <- (take n (sort(zip (map (med inst) datos) listEti) ))])))
 -- 
 
 -- Ejercicio 11 

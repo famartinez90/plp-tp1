@@ -17,7 +17,8 @@ allTests = test [
  "normalizarExtractor" ~: testNormalizarExtractor,
  "extraerFeatures" ~: testExtraerFeatures,
  "distEuclideana" ~: testDistEuclideana,
- "distCoseno" ~: testDistCoseno
+ "distCoseno" ~: testDistCoseno,
+ "knn" ~: testKnn
  ]
 
 testsSplit = test [
@@ -85,3 +86,12 @@ testDistCoseno = test [
  distCoseno [30.0] [10.0] ~?= 1.0
  ]
 
+testKnn = test [
+ (knn 2 [[0,1],[0,2],[2,1],[1,1],[2,3]] ["i","i","f","f","i"] distEuclideana) [1,1] ~?= "f",
+ (knn 2 [[0,1],[0,2],[2,1],[1,1],[2,3]] ["i","i","f","f","i"] distCoseno) [1,1] ~?= "i",
+ (knn 5 [[0,1],[0,2],[2,1],[1,1],[2,3]] ["i","i","f","f","i"] distEuclideana) [1,1] ~?= "f",
+ (knn 6 [[0,1],[1000,1000],[100,0],[0,100],[100,100],[1,1]] ["i","i","f","f","f","i"] distEuclideana) [1,1] ~?= "f",
+ (knn 2 [[0,1],[0,2],[2,1],[1,1],[2,3]] ["i","i","i","i","i"] distEuclideana) [1,1] ~?= "i",
+ (knn 2 [[0,1],[1,1]] ["i","f"] distEuclideana) [1,1] ~?= "f",
+ (knn 2 [[1,1]] ["f"] distEuclideana) [1,1] ~?= "f"
+ ]
