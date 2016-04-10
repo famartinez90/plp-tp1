@@ -19,7 +19,8 @@ allTests = test [
  "distEuclideana" ~: testDistEuclideana,
  "distCoseno" ~: testDistCoseno,
  "knn" ~: testKnn,
- "separarDatos" ~: testSepararDatos
+ "separarDatos" ~: testSepararDatos,
+ "accuracy" ~: testAccuracy
  ]
 
 testsSplit = test [
@@ -110,4 +111,11 @@ testSepararDatos = test [
  (x_val2, y_val2) ~?= ([[1.0,1.0]],["1"]),
  (x_train3, y_train3) ~?= ([[4.0,4.0],[5.0,5.0],[6.0,6.0]],["4","5","6"]),
  (x_val3, y_val3) ~?= ([[1.0,1.0],[2.0,2.0],[3.0,3.0]],["1","2","3"])
+ ]
+
+testAccuracy = test [
+ accuracy ["f", "f", "i", "i", "f"] ["i", "f", "i", "f", "f"] ~?= 0.6,
+ accuracy ["f", "i", "f", "i", "i"] ["i", "f", "i", "f", "f"] ~?= 0.0,
+ accuracy ["i", "f", "i", "f", "f"] ["i", "f", "i", "f", "f"] ~?= 1.0,
+ accuracy ["i", "f", "i", "f", "f", "f"] ["i", "f", "i", "i", "i", "i"] ~?= 0.5
  ]
