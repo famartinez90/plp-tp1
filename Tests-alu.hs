@@ -14,7 +14,8 @@ allTests = test [
  "longitudPromedioPalabras" ~: testLongitudPromedioPalabras,
  "repeticionesPromedio" ~: testRepeticionesPromedio,
  "frecuenciaTokens" ~: testFrecuenciaTokens,
- "normalizarExtractor" ~: testNormalizarExtractor
+ "normalizarExtractor" ~: testNormalizarExtractor,
+ "extraerFeatures" ~: testExtraerFeatures
  ]
 
 testsSplit = test [
@@ -26,8 +27,7 @@ testsSplit = test [
 testLongitudPromedioPalabras = test [
  longitudPromedioPalabras "Este test tiene palabras $$++$$" ~?= 5.4,
  longitudPromedioPalabras "test test test" ~?= 4,
- longitudPromedioPalabras "a bc def ghij klmno" ~?= 3,
- longitudPromedioPalabras "" ~?= 0
+ longitudPromedioPalabras "a bc def ghij klmno" ~?= 3
  ]
 
 testsCuentas = test [
@@ -40,8 +40,7 @@ testsCuentas = test [
 testRepeticionesPromedio = test [
  repeticionesPromedio "lalala $$++$$ lalala lalala $$++$$" ~?= 2.5,
  repeticionesPromedio "lalala lalala lalala" ~?= 3,
- repeticionesPromedio "lalala $$++$$ lalala lalala $$++$$ a b" ~?= 1.75,
- repeticionesPromedio "" ~?= 1
+ repeticionesPromedio "lalala $$++$$ lalala lalala $$++$$ a b" ~?= 1.75
  ]
 
 testFrecuenciaTokens = test [
@@ -58,4 +57,13 @@ testNormalizarExtractor = test [
  (normalizarExtractor ["lalala $$++$$ lalala lalala $$++$$", "lalala lalala lalala", "lalala $$++$$ lalala lalala $$++$$ a b"] repeticionesPromedio) "lalala lalala lalala" ~?= 1,
  (normalizarExtractor ["lalala $$++$$ lalala lalala $$++$$", "lalala lalala lalala", "lalala $$++$$ lalala lalala $$++$$ a b"] repeticionesPromedio) "lalala $$++$$ lalala lalala $$++$$" ~?= 0.8333333,
  (normalizarExtractor ["lalala $$++$$ lalala lalala $$++$$", "lalala lalala lalala", "lalala $$++$$ lalala lalala $$++$$ a b"] repeticionesPromedio) "lalala $$++$$ lalala lalala $$++$$ a b" ~?= 0.5833333
+ ]
+
+testExtraerFeatures = test [
+  extraerFeatures [longitudPromedioPalabras, repeticionesPromedio] ["b=a", "a = 2; a = 4", "C:/DOS C:/DOS/RUN RUN/DOS/RUN"] ~?= [[0.33333334,0.6666667],[0.12962963,1.0],[1.0,0.6666667]],
+  extraerFeatures [longitudPromedioPalabras, repeticionesPromedio] ["A B A B A B A B"] ~?= [[1.0,1.0]],
+  extraerFeatures [longitudPromedioPalabras, repeticionesPromedio] ["A B A B A B A B", "C"] ~?= [[1.0,1.0], [1.0,0.25]],
+  extraerFeatures [longitudPromedioPalabras, repeticionesPromedio] ["ABABABAB", "C"] ~?= [[1.0,1.0], [0.125,1.0]],
+  extraerFeatures [longitudPromedioPalabras, (head frecuenciaTokens)] ["use_snake_case !", "lalala $$++$$"] ~?= [[1.0,1.0], [0.8,0.0]],
+  extraerFeatures [longitudPromedioPalabras, (head frecuenciaTokens)] ["use_snake_case !", "_____"] ~?= [[1.0,0.125], [0.6666667,1.0]]
  ]
