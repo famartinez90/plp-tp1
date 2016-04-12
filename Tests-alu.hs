@@ -20,7 +20,8 @@ allTests = test [
  "distCoseno" ~: testDistCoseno,
  "knn" ~: testKnn,
  "separarDatos" ~: testSepararDatos,
- "accuracy" ~: testAccuracy
+ "accuracy" ~: testAccuracy,
+ "nFoldCrossValidation" ~: testNFoldCrossValidation
  ]
 
 testsSplit = test [
@@ -118,4 +119,13 @@ testAccuracy = test [
  accuracy ["f", "i", "f", "i", "i"] ["i", "f", "i", "f", "f"] ~?= 0.0,
  accuracy ["i", "f", "i", "f", "f"] ["i", "f", "i", "f", "f"] ~?= 1.0,
  accuracy ["i", "f", "i", "f", "f", "f"] ["i", "f", "i", "i", "i", "i"] ~?= 0.5
+ ]
+
+rs = [[0,1],[0,2],[2,1],[1,1],[2,3],[4,4],[5,5]] :: Datos
+ers = ["i","i","f","f","i","f","i"]
+
+testNFoldCrossValidation = test [
+ nFoldCrossValidation 3 rs ers ~?= 0.25,
+ nFoldCrossValidation 6 rs ers ~?= 0.0,
+ nFoldCrossValidation 7 rs ers ~?= 1.0
  ]

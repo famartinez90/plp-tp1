@@ -142,7 +142,7 @@ part3 xs n p = drop	(p*(cantXPart xs n)) (podarLista xs n)
 -- Hacer un promedio de los accuracy generados tomando separarDatos donde vario el p para quedarme con una particion distinta cada vez. Luego separarDatos nos devuelve una cuadrupla (d1,d2,eti1,eti2) y con esta uso la funcion prueba sobre la particion obtenida d2 para aplicarle 15-vecinos mas cercarnos con distEuclediana usando d1 y eti1 para los datos de entrenamiento. Al resultado le aplico accuracy contra eti2 y armo la lista de estas accuracys para cada vez que vario la particion p. Finalmente, aplico mean sobre la lista para obetener el promedio. 
 
 nFoldCrossValidation :: Int -> Datos -> [Etiqueta] -> Float
-nFoldCrossValidation n datos etiq = mean ([accuracy (prueba d2 15 d1 eti1) eti2  |p<-[1,n], let (d1,d2,eti1,eti2) =(separarDatos datos etiq n p)] ) 
+nFoldCrossValidation n datos etiq = mean ([accuracy (prueba d2 15 d1 eti1) eti2 | p<-[1,n], let (d1,d2,eti1,eti2) = (separarDatos datos etiq n p)] ) 
 
 prueba::Datos -> Int -> Datos -> [Etiqueta] -> [Etiqueta]
 prueba datap n datos etits = map (knn n datos etits distEuclideana) datap 
