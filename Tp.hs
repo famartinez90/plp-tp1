@@ -39,7 +39,6 @@ cuentas :: Eq a => [a] -> [(Int, a)]
 cuentas = (\xs -> zip (map (\x -> length (filter (==x) xs)) (nub xs)) (nub xs))
 
 -- Ejercicio 4
--- Extractor = (String -> Feature)
 -- Dado un String, aplicamos Split para obtener la separacion de las "palabras". Luego aplicamos cuentas para obtener la cantidad de apariciones de cada una. Como aparecen en tuplas usamos map para quedarmos con la lista solamente que contiene la cantidad de apariciones y finalmente usamos mean para obtener el promedio.
 repeticionesPromedio :: Extractor
 repeticionesPromedio = (\t -> mean (map (\x -> fromIntegral (fst x)) (cuentas (split ' ' t))))
@@ -111,6 +110,7 @@ accuracy :: [Etiqueta] -> [Etiqueta] -> Float
 accuracy xs ys = (genericLength([y |y<-(zip xs ys),fst(y)==snd(y) ]))/(genericLength(zip xs ys))   
 
 -- Ejercicio 10
+-- Toma Datos y un conjunto de Etiquetas, los particiona en partes iguales, y luego reune las particiones excepto una que la retorna por separado.  
 separarDatos :: Datos -> [Etiqueta] -> Int -> Int -> (Datos, Datos, [Etiqueta], [Etiqueta])
 separarDatos xs ys n p = ( (part1 xs n p) ++ (part3 xs n p) ,
 							(part2 xs n p)					,
@@ -118,40 +118,31 @@ separarDatos xs ys n p = ( (part1 xs n p) ++ (part3 xs n p) ,
 							(part2 ys n p)
 							)
 
---cantXPart: devuelve la cantidad de elementos que habría en cada partición si se divide la lista em "n" partes iguales
---sin contar los elementos que sobren
+-- cantXPart: Devuelve la cantidad de elementos que habría en cada partición si se divide la lista em "n" partes iguales sin contar los elementos que sobren
 cantXPart :: [a] -> Int -> Int
 cantXPart xs n = div (length xs) n
 
---podarLista: Dada una Lista y una cantidad "n" de particiones a la lista, 
---devuelve la lista ignorando los elementos que sobren de esa partición 
+-- podarLista: Dada una Lista y una cantidad "n" de particiones a la lista, devuelve la lista ignorando los elementos que sobren de esa partición 
 podarLista:: [a] -> Int -> [a]
 podarLista xs n = take ((cantXPart xs n)*n) xs
 
---devuelve desde el comienzo de la lista hasta justo antes de comenzar la partición "p"
+-- Devuelve desde el comienzo de la lista hasta justo antes de comenzar la partición "p"
 part1:: [a] -> Int -> Int -> [a]
 part1 xs n p = take	 ((p-1)*(cantXPart xs n))	xs 
 
---devuelve la partición "p" de la lista
+-- Devuelve la partición "p" de la lista
 part2:: [a] -> Int -> Int -> [a]
-part2 xs n p = drop 	((p-1)*(cantXPart xs n))	(take	 (p*(cantXPart xs n))	xs)
+part2 xs n p = drop ((p-1)*(cantXPart xs n)) (take (p*(cantXPart xs n))	xs)
 
---devuelve la lista desde el elemento después de la partición p hasta la última partición valida
---(no toma en cuenta los elementos que sobran)
+-- Devuelve la lista desde el elemento después de la partición p hasta la última partición valida (no toma en cuenta los elementos que sobran)
 part3:: [a] -> Int -> Int -> [a]
-part3 xs n p = drop	 (p*(cantXPart xs n))	(podarLista xs n) 
+part3 xs n p = drop	(p*(cantXPart xs n)) (podarLista xs n) 
 
 -- Ejercicio 12
--- Idea obtener una lista con las distancias al punto  "a evaluar" luego ordenar y quedarse con 15 elementos de esos ver cual es el que mas se repite y elegir el mayor
---la idea es la siguiente:
---hacer un promedio de los accuracy generados tomando separarDatos donde vario el p para quedarme con una particion distinta 
--- luego separar datos nos devuelve una cuadrupla (d1,d2,eti1,eti2) uso la funcion prueba para con d2 obtener una etiqueta por cada instancia de forma de obtener una etiqueta para cada instancia(aca es donde obtenemos la lista para hacer accuracy entre eti2(que es la posta y la que conseguimos mediante prueba)). 
+-- Hacer un promedio de los accuracy generados tomando separarDatos donde vario el p para quedarme con una particion distinta cada vez. Luego separarDatos nos devuelve una cuadrupla (d1,d2,eti1,eti2) y con esta uso la funcion prueba sobre la particion obtenida d2 para aplicarle 15-vecinos mas cercarnos con distEuclediana usando d1 y eti1 para los datos de entrenamiento. Al resultado le aplico accuracy contra eti2 y armo la lista de estas accuracys para cada vez que vario la particion p. Finalmente, aplico mean sobre la lista para obetener el promedio. 
 
 nFoldCrossValidation :: Int -> Datos -> [Etiqueta] -> Float
 nFoldCrossValidation n datos etiq = mean ([accuracy (prueba d2 15 d1 eti1) eti2  |p<-[1,n], let (d1,d2,eti1,eti2) =(separarDatos datos etiq n p)] ) 
 
 prueba::Datos -> Int -> Datos -> [Etiqueta] -> [Etiqueta]
 prueba datap n datos etits = map (knn n datos etits distEuclideana) datap 
-
--- paja probar.. jjejee pero mañana veo me tengo fe
-
