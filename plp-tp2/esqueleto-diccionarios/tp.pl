@@ -52,9 +52,15 @@ asignar_var(A,Mi,[(A,_),Mi]).
 % Pregunta?  Por que funciona asignar_var/3 
 
 % Ejercicio 5
+palabras_con_variables(P, V):- mapeo_palabras(P, M), asignaciones_variables(P, M, V).
 
-%palabras_con_variables
+mapeo_palabras([[]], M).
+mapeo_palabras([[]|Ps], M):- mapeo_palabras(Ps, M).
+mapeo_palabras([[C|P]|Ps], M):- asignar_var(C, M, Mf), mapeo_palabras([[P]|Ps], Mf).
 
+asignaciones_variables([[]], M, [[]]).
+asignaciones_variables([[]|Ps], M, [[]|Vs]):- asignaciones_variables(Ps, M, Vs).
+asignaciones_variables([[C|P]|Ps], M [[D|V]|Vs]):- member((C, D), M), asignaciones_variables([[P]|Ps], M, [[V]|Vs]).
 
 % Ejercicio 6
 
