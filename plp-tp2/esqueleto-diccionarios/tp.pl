@@ -29,11 +29,15 @@ ej(2, [rombo, cuadrado, espacio, perro, triangulo, sol, cuadrado]).
 
 ej(3, [rombo, cuadrado, perro, cuadrado, sol, luna, triangulo, estrella, arbol, gato]).
 
-% Ejercicio 2 
+% Ejercicio 1
+
+diccionario_lista(L):- diccionario(S), string_codes(S, L).
+
+% Ejercicio 2
 
 juntar_con([],_,[]).
 juntar_con([L],_,L).
-juntar_con([L|Ls],Y, Rs):- juntar_con(Ls,Y,Ss), append(L,[Y],R) , append(R,Ss,Rs).  
+juntar_con([L|Ls],Y, Rs):- juntar_con(Ls,Y,Ss), append(L,[Y],R) , append(R,Ss,Rs).
 
 % Ejercicio 3 PULIR DETALLES por ejemplo cuando tiene muchos espacios.
 
@@ -49,7 +53,7 @@ tail([_|Xs],Xs).
 asignar_var(A,Mi,Mi):- member((A,_),Mi),!.
 asignar_var(A,Mi,[(A,_),Mi]).
 
-% Pregunta?  Por que funciona asignar_var/3 
+% Pregunta?  Por que funciona asignar_var/3
 
 % Ejercicio 5
 palabras_con_variables(P, V):- mapeo_palabras(P, M), asignaciones_variables(P, M, V).
@@ -68,15 +72,11 @@ quitar(_,[],[]).
 quitar(E,[L|Ls],R):- E==L, quitar(E,Ls,R).
 quitar(E,[L|Ls],[L|R]):- E\==L, quitar(E,Ls,R).
 
-% Ejercicio 7 
+% Ejercicio 7
 
 cant_distintos([],0).
 cant_distintos([L|Ls],N):- quitar(L,Ls,R), cant_distintos(R,M), N is M+1.
 
-% las devoluciones de panes se graban pero depende del formato. Si 
-% es franquicia o consecion no, no las graban al menos que autoricen la devolcion si? las de red 
+% las devoluciones de panes se graban pero depende del formato. Si
+% es franquicia o consecion no, no las graban al menos que autoricen la devolcion si? las de red
 % si, son las que graban.
-
-
-
-	
