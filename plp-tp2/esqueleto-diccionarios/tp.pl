@@ -58,13 +58,13 @@ asignar_var(A,Mi,[(A,_),Mi]).
 % Ejercicio 5
 palabras_con_variables(P, V):- mapeo_palabras(P, M), asignaciones_variables(P, M, V).
 
-mapeo_palabras([[]], M).
+mapeo_palabras([[]], _).
 mapeo_palabras([[]|Ps], M):- mapeo_palabras(Ps, M).
 mapeo_palabras([[C|P]|Ps], M):- asignar_var(C, M, Mf), mapeo_palabras([[P]|Ps], Mf).
 
-asignaciones_variables([[]], M, [[]]).
+asignaciones_variables([[]], _, [[]]).
 asignaciones_variables([[]|Ps], M, [[]|Vs]):- asignaciones_variables(Ps, M, Vs).
-asignaciones_variables([[C|P]|Ps], M [[D|V]|Vs]):- member((C, D), M), asignaciones_variables([[P]|Ps], M, [[V]|Vs]).
+asignaciones_variables([[C|P]|Ps], M, [[D|V]|Vs]):- member((C, D), M), asignaciones_variables([[P]|Ps], M, [[V]|Vs]).
 
 % Ejercicio 6
 
@@ -80,3 +80,14 @@ cant_distintos([L|Ls],N):- quitar(L,Ls,R), cant_distintos(R,M), N is M+1.
 % las devoluciones de panes se graban pero depende del formato. Si
 % es franquicia o consecion no, no las graban al menos que autoricen la devolcion si? las de red
 % si, son las que graban.
+
+%Ejercicio 8
+
+descifrar(S, M):- palabras(S, P), palabras_con_variables(P, V), listas_de_diccionario(V), unir_con_espacios(V, M).
+
+listas_de_diccionario([L]):- diccionario_lista(L).
+listas_de_diccionario([L|Ls]):- diccionario_lista(L), listas_de_diccionario(Ls).
+
+unir_con_espacios([], _).
+unir_con_espacios([V], M):- append(M, V, Ma), unir_con_espacios([], Ma).
+unir_con_espacios([V, W | Vs], M):- append(V, [32], Ve), append(M, Ve, Ma), unir_con_espacios([W|Vs], Ma).
