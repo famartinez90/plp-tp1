@@ -29,10 +29,6 @@ ej(2, [rombo, cuadrado, espacio, perro, triangulo, sol, cuadrado]).
 
 ej(3, [rombo, cuadrado, perro, cuadrado, sol, luna, triangulo, estrella, arbol, gato]).
 
-% Ejercicio 1
-
-diccionario_lista(L):- diccionario(S), string_codes(S, L).
-
 % Ejercicio 2
 
 juntar_con([],_,[]).
@@ -83,11 +79,7 @@ cant_distintos([L|Ls],N):- quitar(L,Ls,R), cant_distintos(R,M), N is M+1.
 
 %Ejercicio 8
 
-descifrar(S, M):- palabras(S, P), palabras_con_variables(P, V), listas_de_diccionario(V), unir_con_espacios(V, M).
+descifrar(S, M):- palabras(S, P), palabras_con_variables(P, V), listas_de_diccionario(V), juntar_con(V, 32, M).
 
 listas_de_diccionario([L]):- diccionario_lista(L).
 listas_de_diccionario([L|Ls]):- diccionario_lista(L), listas_de_diccionario(Ls).
-
-unir_con_espacios([], _).
-unir_con_espacios([V], M):- append(M, V, Ma), unir_con_espacios([], Ma).
-unir_con_espacios([V, W | Vs], M):- append(V, [32], Ve), append(M, Ve, Ma), unir_con_espacios([W|Vs], Ma).
