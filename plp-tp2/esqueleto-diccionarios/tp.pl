@@ -47,6 +47,7 @@ tail([_|Xs],Xs).
 
 % Ejercicio 4
 asignar_var(A,Mi,Mi):- member((A,_),Mi),!.
+asignar_var(A,[],[(A,_)]):- !.
 asignar_var(A,Mi,[(A,_),Mi]).
 
 % Pregunta?  Por que funciona asignar_var/3
