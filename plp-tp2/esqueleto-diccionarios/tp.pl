@@ -18,7 +18,9 @@ read_file(Stream,[X|L]) :-
     read_line_to_codes(Stream,Codes),
     string_codes(X, Codes),
     assertz(diccionario(X)),
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     assertz(diccionario_lista(Codes)),
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     read_file(Stream,L), !.
 
 
@@ -28,15 +30,15 @@ ej(1, [rombo, cuadrado, espacio, perro, cuadrado, sol, cuadrado]).
 ej(2, [rombo, cuadrado, espacio, perro, triangulo, sol, cuadrado]).
 
 ej(3, [rombo, cuadrado, perro, cuadrado, sol, luna, triangulo, estrella, arbol, gato]).
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Ejercicio 2
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 juntar_con([],_,[]).
 juntar_con([L],_,L).
 juntar_con([L|Ls],Y, Rs):- juntar_con(Ls,Y,Ss), append(L,[Y],R) , append(R,Ss,Rs).
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Ejercicio 3 PULIR DETALLES por ejemplo cuando tiene muchos espacios.
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 palabras([],[[]]).
 palabras([L|Ls],[R|C]):- L \== espacio, palabras(Ls,Rs), head(Rs,T),tail(Rs,C), append([L],T,R).
 palabras([L|Ls],[[]|Rs]):- L == espacio, palabras(Ls,Rs).
@@ -44,33 +46,46 @@ palabras([L|Ls],[[]|Rs]):- L == espacio, palabras(Ls,Rs).
 head([X|_],X).
 tail([_|Xs],Xs).
 
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Ejercicio 4
-asignar_var(A,Mi,Mi):- member((A,_),Mi),!.
-asignar_var(A,[],[(A,_)]):- !.
-asignar_var(A,Mi,[(A,_),Mi]).
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+asignar_var(A,Mi,Mi):- member((A,_),Mi).
+asignar_var(A,Mi,[(A,_)|Mi]):- not(member((A,_),Mi)).
 
 % Pregunta?  Por que funciona asignar_var/3
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Ejercicio 5
-palabras_con_variables(P, V):- mapeo_palabras(P, M), asignaciones_variables(P, M, V).
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+palabras_con_variables([],[]).
+palabras_con_variables(Xs,Rs):-asignar_var_list_list(Xs,[],Mp), palabras_con_variables_aux(Xs,Rs,Mp). 
 
-mapeo_palabras([[]], _).
-mapeo_palabras([[]|Ps], M):- mapeo_palabras(Ps, M).
-mapeo_palabras([[C|P]|Ps], M):- asignar_var(C, M, Mf), mapeo_palabras([[P]|Ps], Mf).
+palabras_con_variables_aux([],[],_).
+palabras_con_variables_aux([X|Xs],[R|Rs],Mp):- palabra_con_variable(X,R,Mp), palabras_con_variables_aux(Xs,Rs,Mp). 
 
-asignaciones_variables([[]], _, [[]]).
-asignaciones_variables([[]|Ps], M, [[]|Vs]):- asignaciones_variables(Ps, M, Vs).
-asignaciones_variables([[C|P]|Ps], M, [[D|V]|Vs]):- member((C, D), M), asignaciones_variables([[P]|Ps], M, [[V]|Vs]).
 
+
+palabra_con_variable([],[],_).
+palabra_con_variable([X|Xs],[T|Ts],Mp):- member((X,T), Mp) , palabra_con_variable(Xs,Ts,Mp). 
+
+
+asignar_var_list_list([],Mi,Mi).
+asignar_var_list_list([X|Xs],Mi,Mt):- asignar_var_list_list(Xs,Mi,Mf), asignar_var_list(X,Mf,Mt).
+
+
+asignar_var_list([],Mi,Mi).
+asignar_var_list([X|Xs],Mi,Mt):- asignar_var_list(Xs,Mi,Mf), asignar_var(X,Mf,Mt).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Ejercicio 6
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 quitar(_,[],[]).
 quitar(E,[L|Ls],R):- E==L, quitar(E,Ls,R).
 quitar(E,[L|Ls],[L|R]):- E\==L, quitar(E,Ls,R).
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Ejercicio 7
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 cant_distintos([],0).
 cant_distintos([L|Ls],N):- quitar(L,Ls,R), cant_distintos(R,M), N is M+1.
 
@@ -84,3 +99,17 @@ descifrar(S, M):- palabras(S, P), palabras_con_variables(P, V), listas_de_diccio
 
 listas_de_diccionario([L]):- diccionario_lista(L).
 listas_de_diccionario([L|Ls]):- diccionario_lista(L), listas_de_diccionario(Ls).
+
+
+
+
+
+
+
+
+
+
+
+
+
+
