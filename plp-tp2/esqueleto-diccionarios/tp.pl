@@ -33,12 +33,19 @@ ej(3, [rombo, cuadrado, perro, cuadrado, sol, luna, triangulo, estrella, arbol, 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Ejercicio 2
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% juntar_con(?X, +Y, ?Z)
+% No vamos a pedir que tanto X como Z esten o no instanciados. Sin embargo, el caso en que ninguno
+% esta instanciado no es valido, dado que las soluciones son infinitas. 
 juntar_con([],_,[]).
 juntar_con([L],_,L).
 juntar_con([L|Ls],Y, Rs):- juntar_con(Ls,Y,Ss), append(L,[Y],R) , append(R,Ss,Rs).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Ejercicio 3 PULIR DETALLES por ejemplo cuando tiene muchos espacios.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% palabras(+X, -Y)
+% La decision de poner Y no instanciado se debe a que en nuestros ejercicios siempre
+% nos viene como entrada una lista que no es del estilo lista de listas, con lo cual
+% siempre buscamos quien es Y.
 palabras([],[[]]).
 palabras([L|Ls],[R|C]):- L \== espacio, palabras(Ls,Rs), head(Rs,T),tail(Rs,C), append([L],T,R).
 palabras([L|Ls],[[]|Rs]):- L == espacio, palabras(Ls,Rs).
@@ -97,6 +104,7 @@ cant_distintos([L|Ls],N):- quitar(L,Ls,R), cant_distintos(R,M), N is M+1.
 
 descifrar(S, M):- palabras(S, P), palabras_con_variables(P, V), listas_de_diccionario(V), juntar_con(V, 32, M).
 
+% ESTO NO ESTA ANDANDO
 listas_de_diccionario([L]):- diccionario_lista(L).
 listas_de_diccionario([L|Ls]):- diccionario_lista(L), listas_de_diccionario(Ls).
 
