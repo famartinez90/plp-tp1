@@ -19,10 +19,10 @@ read_file(Stream,[X|L]) :-
     string_codes(X, Codes),
     assertz(diccionario(X)),
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%diccionario_lista(+L).
     assertz(diccionario_lista(Codes)),
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     read_file(Stream,L), !.
-
 
 % listar mensajes secretos de ejemplo.
 ej(1, [rombo, cuadrado, espacio, perro, cuadrado, sol, cuadrado]).
@@ -107,15 +107,37 @@ cant_distintos([L|Ls],N):- quitar(L,Ls,R), cant_distintos(R,M), N is M+1.
 %Ejercicio 8
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % ESTO NO ESTA ANDANDO
+%descifrar(+S, -M)
 descifrar(S, M):- palabras(S, P), palabras_con_variables(P, V), listas_de_diccionario(V), juntar_con(V, 32, M).
 
 
 listas_de_diccionario([L]):- diccionario_lista(L).
 listas_de_diccionario([L|Ls]):- diccionario_lista(L), listas_de_diccionario(Ls).
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%Ejercicio 9
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%falta 
+%descifrar(+S, -M)
+descifrar_sin_espacios(S, V):- quitar(espacio,S,L), palabras(L, P), palabras_con_variables(P, V), aplanar(V,W).
 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%cosas que probablemente puedan servir para el ej 9 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%lenght(?L,+X).
+lenght([],0).
+lenght([_|L],T):- T>0, T1 is T-1,lenght(L,T1). 
 
+%long(+L,?X).
+long([],0).
+long([_|L],T):- long(L,T1), T is T1+1. 
+
+%aplanar(+Ls,?R)
+aplanar([],[]).
+aplanar([[X|Xs]|Ls],R):-aplana([X|Xs],T),aplana(Ls,L),append(T,L,R),!.
+aplanar([[]|Xs],R):-aplana(Xs,R),!.
+aplanar([X|Xs],[X|R]):-aplana(Xs,R). 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
 
