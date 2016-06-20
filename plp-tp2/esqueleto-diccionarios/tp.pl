@@ -30,6 +30,8 @@ ej(1, [rombo, cuadrado, espacio, perro, cuadrado, sol, cuadrado]).
 ej(2, [rombo, cuadrado, espacio, perro, triangulo, sol, cuadrado]).
 
 ej(3, [rombo, cuadrado, perro, cuadrado, sol, luna, triangulo, estrella, arbol, gato]).
+
+ej(4, [rombo, cuadrado, triangulo]).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Ejercicio 2
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -91,7 +93,8 @@ asignar_var_list([X|Xs],Mi,Mt):- asignar_var_list(Xs,Mi,Mf), asignar_var(X,Mf,Mt
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Ejercicio 6
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% quitar(+X, +Y, -Z)
+% quitar(+X, ?Y, ?Z)
+% Al menos uno de Y y Z debe estar instanciado
 quitar(_,[],[]).
 quitar(E,[L|Ls],R):- E==L, quitar(E,Ls,R).
 quitar(E,[L|Ls],[L|R]):- E\==L, quitar(E,Ls,R).
@@ -104,22 +107,22 @@ cant_distintos([],0).
 cant_distintos([L|Ls],N):- quitar(L,Ls,R), cant_distintos(R,M), N is M+1.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%Ejercicio 8
+% Ejercicio 8
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % descifrar(+X, -Y)
 descifrar(S, M):-
-    palabras(S, P),
-    palabras_con_variables(P, V),
-    listas_de_diccionario(V),
-    juntar_con(V, 32, L),
-    length(S, X),
-    length(L, Y),
-    X == Y,
-    cant_distintos(S, W),
-    cant_distintos(L, Z),
-    W == Z,
-    to_string(L, N),
-    with_output_to(atom(M), maplist(write, N)).
+    palabras(S, Palabras),
+    palabras_con_variables(Palabras, Variables),
+    listas_de_diccionario(Variables),
+    juntar_con(Variables, 32, Var_con_espacios),
+    length(S, Len_s),
+    length(Var_con_espacios, Len_var),
+    Len_s == Len_var,
+    cant_distintos(S, Elem_dist_s),
+    cant_distintos(Var_con_espacios, Elem_dist_var),
+    Elem_dist_s == Elem_dist_var,
+    to_string(Var_con_espacios, Lista_strings),
+    with_output_to(atom(M), maplist(write, Lista_strings)).
 
 % to_string(-X, +Y)
 to_string([], []).
@@ -130,12 +133,27 @@ listas_de_diccionario([L]):- diccionario_lista(L).
 listas_de_diccionario([L|Ls]):- diccionario_lista(L), listas_de_diccionario(Ls).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%Ejercicio 9
+% Ejercicio 9
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%falta
-%descifrar(+S, -M)
-descifrar_sin_espacios(S, V):- quitar(espacio,S,L), palabras(L, P), palabras_con_variables(P, V), aplanar(V,W).
+% descifrar_sin_espacios(+S, -M)
+descifrar_sin_espacios(S, M):-
+    con_espacios(S, E),
+    descifrar(E, M).
 
+% con_espacios(+L, -R)
+con_espacios(L, R):-
+    length(L, X),
+    Z is X*2-1,
+    between(X, Z, Y),
+    length(R, Y),
+    mismos_elementos_con_espacios(L, R).
+
+% mismos_elementos_con_espacios(+L, -M)
+mismos_elementos_con_espacios([], []).
+mismos_elementos_con_espacios(Ls, [espacio|Ms]):-
+    mismos_elementos_con_espacios(Ls, Ms).
+mismos_elementos_con_espacios([L|Ls], [L|Ms]):-
+    mismos_elementos_con_espacios(Ls, Ms).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%cosas que probablemente puedan servir para el ej 9 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
