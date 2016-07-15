@@ -109,20 +109,27 @@ cant_distintos([L|Ls],N):- quitar(L,Ls,R), cant_distintos(R,M), N is M+1.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Ejercicio 8
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% La idea en este ejercicio es a partir de las palabras de la lista
+% separadas por espacios, asignarles variables e intentar mapearlas contra
+% la lista de palabras de mi diccionario para encontrar combinaciones
+% posibles.
 % descifrar(+X, -Y)
 descifrar(S, M):-
+    descifrar_en_variables(S, Var_con_espacios),
+    to_string(Var_con_espacios, Lista_strings),
+    with_output_to(atom(M), maplist(write, Lista_strings)).
+
+descifrar_en_variables(S, V):-
     palabras(S, Palabras),
     palabras_con_variables(Palabras, Variables),
     listas_de_diccionario(Variables),
-    juntar_con(Variables, 32, Var_con_espacios),
+    juntar_con(Variables, 32, V),
     length(S, Len_s),
-    length(Var_con_espacios, Len_var),
+    length(V, Len_var),
     Len_s == Len_var,
     cant_distintos(S, Elem_dist_s),
-    cant_distintos(Var_con_espacios, Elem_dist_var),
-    Elem_dist_s == Elem_dist_var,
-    to_string(Var_con_espacios, Lista_strings),
-    with_output_to(atom(M), maplist(write, Lista_strings)).
+    cant_distintos(V, Elem_dist_var),
+    Elem_dist_s == Elem_dist_var.
 
 % to_string(-X, +Y)
 to_string([], []).
@@ -135,6 +142,10 @@ listas_de_diccionario([L|Ls]):- diccionario_lista(L), listas_de_diccionario(Ls).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Ejercicio 9
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% La idea de este ejercicio es basicamente generar todos las posibles
+% combinaciones de listas de la lista S con espacios intercalados usando
+% la funcion con_espacios y luego siemplemente hacemos descifrar de las
+% listas generadas
 % descifrar_sin_espacios(+S, -M)
 descifrar_sin_espacios(S, M):-
     con_espacios(S, E),
@@ -155,19 +166,58 @@ mismos_elementos_con_espacios(Ls, [espacio|Ms]):-
 mismos_elementos_con_espacios([L|Ls], [L|Ms]):-
     mismos_elementos_con_espacios(Ls, Ms).
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%cosas que probablemente puedan servir para el ej 9 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%lenght(?L,+X).
-lenght([],0).
-lenght([_|L],T):- T>0, T1 is T-1,lenght(L,T1).
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Ejercicio 10
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% La idea para mensajes_mas_parejos es usar las funciones que usa descrifrar
+% para generar los mensajes descrifrados posibles, luego obtener su desviacion
+% estandar y, usando las funcion not, pedir que no exista otro mensaje
+% descifrado tal que su desviacion estandar sea menor que el que encontramos
+% al principio (X en el ejercicio). Este ejercicio puede tardar unos segundos
+% en correr debido a todas las combinaciones posibles para el caso de
+% dicc1.txt
+% mensajes_mas_parejos(+S, -M)
+mensajes_mas_parejos(S, M):-
+    con_espacios(S, E),
+    descifrar_en_variables(E, V),
+    palabras_por_codigo(V, P),
+    lista_longitudes(P, L),
+    desviacion_estandar(L, X),
+    not((con_espacios(S, F),
+    descifrar_en_variables(F, W),
+    palabras_por_codigo(W, Q),
+    lista_longitudes(Q, K),
+    desviacion_estandar(K, Y),
+    Y < X)),
+    to_string(V, Lista_strings),
+    with_output_to(atom(M), maplist(write, Lista_strings)).
 
-%long(+L,?X).
-long([],0).
-long([_|L],T):- long(L,T1), T is T1+1.
+% Devuelve una lista con las longitudes de las listas
+% de la lista de listas L
+% lista_longitudes(+L, -R)
+lista_longitudes([], []).
+lista_longitudes([L|Ls], [R|Rs]):-
+    length(L, R),
+    lista_longitudes(Ls, Rs).
 
-%aplanar(+Ls,?R)
-aplanar([],[]).
-aplanar([[X|Xs]|Ls],R):-aplana([X|Xs],T),aplana(Ls,L),append(T,L,R),!.
-aplanar([[]|Xs],R):-aplana(Xs,R),!.
-aplanar([X|Xs],[X|R]):-aplana(Xs,R).
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Calcula la desviacion_estandar de una lista de numeros
+% desviacion_estandar(+L, -SD)
+desviacion_estandar(L, SD):-
+    length(L, Longitud),
+    sumlist(L, Sumatoria),
+    Media is Sumatoria/Longitud,
+    cuadrados(L, Media, Cuadrados),
+    sumlist(Cuadrados, SumaCuadrados),
+    Promedio is SumaCuadrados/Longitud,
+    sqrt(Promedio, SD).
+
+% Devuelve todos los numeros de una lista elevados al cuadrado
+% cuadrados(+L, +M, -C)
+cuadrados([], _, []).
+cuadrados([E|L], M, [C|Cs]):- C is (E-M)*(E-M), cuadrados(L, M, Cs).
+
+% palabras_por_codigo es equivalente a palabras pero separa por el codigo
+% del espacio que es el 32
+palabras_por_codigo([],[[]]).
+palabras_por_codigo([L|Ls],[R|C]):- L \== 32, palabras_por_codigo(Ls,Rs), head(Rs,T),tail(Rs,C), append([L],T,R).
+palabras_por_codigo([L|Ls],[[]|Rs]):- L == 32, palabras_por_codigo(Ls,Rs).
