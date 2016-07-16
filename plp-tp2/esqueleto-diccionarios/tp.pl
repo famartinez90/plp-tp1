@@ -67,6 +67,11 @@ asignar_var(A,Mi,Mi):- member((A,_),Mi).
 asignar_var(A,Mi,[(A,_)|Mi]):- not(member((A,_),Mi)).
 
 % Pregunta?  Por que funciona asignar_var/3
+% Funciona ya que member es de la forma member(?Elem, ?List), con lo cual
+% el elem que le pasamos (en este caso: (A, _)) puede no estar completamente
+% instanciado y por lo tanto member se encarga de unificar con variables
+% libres donde corresponda, que este caso seria el "_". Asi es como genera
+% un mapeo donde existen variables sin instanciar. 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Ejercicio 5
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
